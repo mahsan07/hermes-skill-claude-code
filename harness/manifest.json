@@ -1,0 +1,85 @@
+{
+  "protocol_version": "0.1",
+  "skill": {
+    "id": "hermes-skill-claude-code",
+    "display_name": "Claude Code",
+    "description": "Delegate bounded coding tasks to Claude Code CLI with explicit scope and review gates."
+  },
+  "task_profile": {
+    "category": "engineering",
+    "architecture": "split",
+    "artifact": "terminal",
+    "inputs": [
+      "Bounded coding request",
+      "Repository instructions"
+    ],
+    "outputs": [
+      "Human review gate",
+      "Task scope",
+      "Files changed",
+      "Test output",
+      "Review required"
+    ]
+  },
+  "modules": {
+    "memory": {
+      "strategy": "before_after_evidence",
+      "responsibility": "Retain bounded coding request plus decisions, observations, and verification evidence needed to resume safely."
+    },
+    "planning": {
+      "strategy": "prepare_execute_verify_plan",
+      "responsibility": "Transform repository instructions into the ordered, bounded stages defined by this skill."
+    },
+    "action": {
+      "strategy": "inspect_change_test_handoff",
+      "responsibility": "Advance the workflow through claude code session while preserving stop conditions and user authority."
+    },
+    "capability": {
+      "strategy": "task_conditioned_minimum_capability_set",
+      "responsibility": "Expose only repository, runtime, and verification capabilities required by the bounded engineering task."
+    }
+  },
+  "execution": {
+    "stages": [
+      "Define files behavior and stop conditions",
+      "Provide repository-local instructions",
+      "Delegate the bounded implementation",
+      "Inspect the resulting diff",
+      "Run independent tests and checks",
+      "Return changes for human review"
+    ],
+    "gates": [
+      "scope_and_authority_confirmed",
+      "capability_and_dependency_preflight",
+      "consequential_action_previewed_when_applicable",
+      "output_reopened_and_verified"
+    ]
+  },
+  "verification": {
+    "evidence": [
+      "Task scope",
+      "Files changed",
+      "Test output",
+      "Review required"
+    ],
+    "metrics": [
+      "task_success",
+      "verification_pass_rate",
+      "tool_error_rate",
+      "repair_count",
+      "latency_ms",
+      "estimated_cost_usd"
+    ]
+  },
+  "failure_policy": {
+    "max_repairs": 2,
+    "schema_error": "repair_then_stop",
+    "permission_error": "stop_without_retry",
+    "verification_failure": "report_incomplete"
+  },
+  "maturity": {
+    "level": "executable_contract",
+    "runtime_scope": "validation_and_dry_run_planning",
+    "claim_boundary": "This repository validates and plans the harness contract; it does not claim live service execution or benchmark gains without a connected adapter and measured evidence."
+  }
+}
